@@ -1,2 +1,3 @@
 chatbot.db
 __pycache__
+*.db
