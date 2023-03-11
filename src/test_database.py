@@ -10,9 +10,8 @@ def test_make_user_session():
     timestamp = datetime.now()
     ip = '127.0.0.1'
     username = 'bob'
-    chat_id = 1
     db =next( get_db())
-    user_session = UserSession(ip=ip, username=username, chat_id=chat_id, start_time=timestamp)
+    user_session = UserSession(ip=ip, username=username, start_time=timestamp)
     db.add(user_session)
     db.commit()
     assert user_session.id is not None
@@ -43,6 +42,18 @@ def test_make_chat_message():
     assert chat_message.id is not None
     print("chat_message.id: ", chat_message.id)
     print("All OK for chat_message")
+    
+def test_read_user_session():
+    db = next(get_db())
+    user_session = db.query(UserSession).first()
+    print(user_session)
+    print(user_session.chat_messages)
+    # print session id
+    print(f"The session id is {user_session.id}")
+    # print(user_session.chat_messages[0].message)
+    # print(f"The id of the first chat message is {user_session.chat_messages[0].id}")
+    assert user_session.id is not None
+    print("All OK for read_user_session()")
       
 
 # make a function test if ipython is 
@@ -55,8 +66,9 @@ def in_ipython():
         return False
     
 if in_ipython():
-    # test_make_user_session()
-    test_make_chat_message()
+    test_make_user_session()
+    # test_make_chat_message()
+    test_read_user_session()
 
 # %%
 # # test1

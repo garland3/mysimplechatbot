@@ -8,9 +8,16 @@ const handleSubmit = async (event) => {
   event.preventDefault();
   const formData = new FormData(form);
   const question = formData.get('question');
+  document.getElementById("question").value = "";
   addUserMessage(question);
   const response = await getBotResponse(question);
+  // if response is `redirect` then redict to /
+  if (response === 'redirect') {
+    window.location.href = '/';
+  }
   addBotMessage(response);
+  // formData.get('question').value = '';
+
 };
 
 button.addEventListener('click', handleSubmit);

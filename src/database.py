@@ -12,10 +12,10 @@ Base = declarative_base()
 class UserSession(Base):
     __tablename__ = 'user_sessions'
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     ip = Column(String)
     username = Column(String)
-    chat_id = Column(Integer)
+    chat_id = Column(Integer, autoincrement=True)
     start_time = Column(DateTime, default=datetime.utcnow())
     chat_messages = relationship('ChatMessage', back_populates='user_session')
 
@@ -25,6 +25,7 @@ class ChatMessage(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_session_id = Column(Integer, ForeignKey('user_sessions.id'))
+    agent = Column(String)
     message = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow())
     user_session = relationship('UserSession', back_populates='chat_messages')
@@ -77,9 +78,13 @@ def create_user_session(db, user_session: UserSessionIn):
     return UserSessionOut(**db_user_session.__dict__)
 
 
-def create_chat_message(db, chat_message: ChatMessageIn):
-    db_chat_message = ChatMessage(**chat_message.dict())
+def create_chat_message(db, chat_message: ChatMessageIn, agent: str = 'user'):
+    db_chat_message = ChatMessage(**chat_message.dict(), agent=agent)
     db.add(db_chat_message)
     db.commit()
     db.refresh(db_chat_message)
     return ChatMessageOut(**db_chat_message.__dict__)
+
+def get_user_session(db, user_session_id: int):
+    user_session = db.query(UserSession).filter(UserSession.id == user_session_id).first()
+    return UserSessionOut(**user_session.__dict__)
