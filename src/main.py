@@ -92,4 +92,5 @@ async def index(response: HTMLResponse):
     return response
 
 # run with 
+# conda activate dollytest
 # uvicorn main:app --reload
